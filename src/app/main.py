@@ -3,7 +3,10 @@ from uuid import uuid4
 from app.client import SampleApisCoffeeClient
 from app.exceptions import CoffeeApiError, CoffeeNotFoundError
 
-
+def check_fields(expected: dict, actual: dict, stage: str) -> None:
+    for field, value in expected.items():
+        if actual[field] != value:
+            raise ValueError(f"{stage}: поле {field}: ожидали {value}, получили {actual[field]}")
 def main() -> int:
     client = SampleApisCoffeeClient()
     marker = uuid4().hex[:8]
@@ -31,9 +34,7 @@ def main() -> int:
         created_id = created["id"]
         print(f"2. POST: создан напиток id={created_id}")
         fetched = client.get_drink(created_id)
-        for field, value in new_drink.items():
-            if fetched[field] != value:
-                raise ValueError(f"Поле {field}: ожидали {value}, получили {fetched[field]}")
+        check_fields(new_drink, fetched, "3. GET")
         print("3. GET: все поля совпали с отправленными")
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
