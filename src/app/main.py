@@ -18,7 +18,18 @@ def main() -> int:
         # и убедитесь, что остальные поля сохранились.
         # DELETE и GET: убедитесь, что вернулся ожидаемый 404.
         # После подтверждения удаления: created_id = None.
-        raise NotImplementedError("Заполните этапы сценария")
+        drinks = client.list_drinks()
+        print(f"1. GET: в коллекции {len(drinks)} напитков")
+
+        new_drink = {
+            "title": f"Group coffee {marker}",
+            "description": "Hot drink",
+            "ingredients": ["Water", "Coffee"],
+            "image": "https://example.com/coffee.jpg",
+        }
+        created = client.create_drink(new_drink)
+        created_id = created["id"]
+        print(f"2. POST: создан напиток id={created_id}")
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
         return 1
