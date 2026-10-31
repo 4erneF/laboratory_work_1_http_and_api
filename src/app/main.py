@@ -56,6 +56,14 @@ def main() -> int:
         }
         check_fields(unchanged, after_patch, "остальные поля после PATCH")
         print("5. PATCH: description изменился, остальные поля на месте")
+        client.delete_drink(created_id)
+        try:
+            client.get_drink(created_id)
+        except CoffeeNotFoundError:
+            print("6. DELETE: получили ожидаемый 404, напиток удалён")
+            created_id = None
+        else:
+            raise ValueError("Напиток всё ещё доступен после DELETE")
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
         return 1
