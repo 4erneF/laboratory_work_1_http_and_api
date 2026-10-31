@@ -45,6 +45,17 @@ def main() -> int:
         client.replace_drink(created_id, replacement)
         check_fields(replacement, client.get_drink(created_id), "GET после PUT")
         print("4. PUT: все поля заменились")
+        changes = {"description": "Patched only"}
+        client.update_drink(created_id, changes)
+        after_patch = client.get_drink(created_id)
+        check_fields(changes, after_patch, "GET после PATCH")
+        unchanged = {
+            "title": replacement["title"],
+            "ingredients": replacement["ingredients"],
+            "image": replacement["image"],
+        }
+        check_fields(unchanged, after_patch, "остальные поля после PATCH")
+        print("5. PATCH: description изменился, остальные поля на месте")
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
         return 1
