@@ -23,6 +23,10 @@
 - POST без image -> 400
 - id передавать не нужно
 
+Проверяется только в клиенте:
+- статус ответа проверяется до разбора тела (404 -> CoffeeNotFoundError)
+- перед .json() проверяется Content-Type: application/json
+- id для PUT/PATCH/DELETE берётся только из ответа POST
 """
 
 import requests
@@ -82,6 +86,10 @@ class SampleApisCoffeeClient:
             response = requests.request(
                 method, url, json=payload, timeout=self._timeout
             )
+        except requests.Timeout as error:
+            raise CoffeeApiError(
+                f"{method} {url}: нет ответа за {self._timeout} с, результат неизвестен"
+            ) from error
         except requests.RequestException as error:
             raise CoffeeApiError(f"{method} {url}: ошибка сети") from error
         if response.status_code == 404:
