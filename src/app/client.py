@@ -42,11 +42,11 @@ class SampleApisCoffeeClient:
 
     def list_drinks(self) -> list[JsonObject]:
         response = self._request("GET")
-        return response.json()
+        return self._json(response)
     
     def get_drink(self, drink_id: int) -> JsonObject:
         response = self._request("GET", f"/{drink_id}")
-        return response.json()
+        return self._json(response)
 
     def create_drink(self, payload: JsonObject) -> JsonObject:
         raise NotImplementedError
@@ -86,3 +86,12 @@ class SampleApisCoffeeClient:
         if not 200 <= response.status_code < 300:
             raise CoffeeApiError(f"{method} {url}: HTTP {response.status_code}")
         return response
+
+    def _json(self, response: requests.Response) -> object:
+        content_type = response.headers.get("Content-Type", "")
+        if "application/json" not in content_type:
+            raise CoffeeApiError(f"Ожидали JSON, пришло: {content_type}")
+        try:
+            return response.json()
+        except ValueError as error:
+            raise CoffeeApiError("Сервер прислал битый JSON") from error
