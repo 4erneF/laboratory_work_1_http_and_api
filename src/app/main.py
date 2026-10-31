@@ -30,6 +30,11 @@ def main() -> int:
         created = client.create_drink(new_drink)
         created_id = created["id"]
         print(f"2. POST: создан напиток id={created_id}")
+        fetched = client.get_drink(created_id)
+        for field, value in new_drink.items():
+            if fetched[field] != value:
+                raise ValueError(f"Поле {field}: ожидали {value}, получили {fetched[field]}")
+        print("3. GET: все поля совпали с отправленными")
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
         return 1
