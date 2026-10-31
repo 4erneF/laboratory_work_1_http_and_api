@@ -23,10 +23,10 @@
 - POST без image -> 400
 - id передавать не нужно
 
-
 """
 
 import requests
+from app.exceptions import CoffeeApiError, CoffeeNotFoundError
 
 JsonObject = dict[str, object]
 
@@ -41,8 +41,9 @@ class SampleApisCoffeeClient:
         self._timeout = timeout
 
     def list_drinks(self) -> list[JsonObject]:
-        raise NotImplementedError
-
+        response = self._request("GET")
+        return response.json()
+    
     def get_drink(self, drink_id: int) -> JsonObject:
         raise NotImplementedError
 
@@ -72,4 +73,11 @@ class SampleApisCoffeeClient:
         path: str = "",
         payload: JsonObject | None = None,
     ) -> requests.Response:
-        raise NotImplementedError
+        url = self._base_url + path
+        try:
+            response = requests.request(
+                method, url, json=payload, timeout=self._timeout
+            )
+        except requests.RequestException as error:
+            raise CoffeeApiError(f"{method} {url}: ошибка сети") from error
+        return response
