@@ -49,21 +49,24 @@ class SampleApisCoffeeClient:
         return self._json(response)
 
     def create_drink(self, payload: JsonObject) -> JsonObject:
-        raise NotImplementedError
+        response = self._request("POST", payload=payload)
+        return self._json(response)
 
     def replace_drink(
         self,
         drink_id: int,
         payload: JsonObject,
     ) -> JsonObject:
-        raise NotImplementedError
+        response = self._request("PUT", f"/{drink_id}", payload)
+        return self._json(response)
 
     def update_drink(
         self,
         drink_id: int,
         changes: JsonObject,
     ) -> JsonObject:
-        raise NotImplementedError
+        response = self._request("PATCH", f"/{drink_id}", changes)
+        return self._json(response)
 
     def delete_drink(self, drink_id: int) -> None:
         self._request("DELETE", f"/{drink_id}")
