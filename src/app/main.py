@@ -5,10 +5,8 @@ from app.exceptions import CoffeeApiError, CoffeeNotFoundError
 
 def check_fields(expected: dict, actual: dict, stage: str) -> None:
     for field, value in expected.items():
-        if actual[field] != value:
-            raise ValueError(f"{stage}: поле {field}: ожидали {value}, получили {actual[field]}")
-def main() -> int:
-    client = SampleApisCoffeeClient()
+        if actual.get(field) != value:
+            raise ValueError(f"{stage}: поле {field}: ожидали {value}, получили {actual.get(field)}")
     marker = uuid4().hex[:8]
     created_id = None
     try:

@@ -50,8 +50,7 @@ class SampleApisCoffeeClient:
     
     def get_drink(self, drink_id: int) -> JsonObject:
         response = self._request("GET", f"/{drink_id}")
-        return self._json(response)
-
+        return self._json_object(response)
     def create_drink(self, payload: JsonObject) -> JsonObject:
         response = self._request("POST", payload=payload)
         created = self._json(response)
@@ -68,7 +67,7 @@ class SampleApisCoffeeClient:
         payload: JsonObject,
     ) -> JsonObject:
         response = self._request("PUT", f"/{drink_id}", payload)
-        return self._json(response)
+        return self._json_object(response)
 
     def update_drink(
         self,
@@ -76,7 +75,7 @@ class SampleApisCoffeeClient:
         changes: JsonObject,
     ) -> JsonObject:
         response = self._request("PATCH", f"/{drink_id}", changes)
-        return self._json(response)
+        return self._json_object(response)
 
     def delete_drink(self, drink_id: int) -> None:
         self._request("DELETE", f"/{drink_id}")
