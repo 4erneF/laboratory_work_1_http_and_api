@@ -54,8 +54,14 @@ class SampleApisCoffeeClient:
 
     def create_drink(self, payload: JsonObject) -> JsonObject:
         response = self._request("POST", payload=payload)
-        return self._json(response)
-
+        created = self._json(response)
+        if not isinstance(created, dict):
+            raise CoffeeApiError("Ответ POST не объект")
+        drink_id = created.get("id")
+        if isinstance(drink_id, bool) or not isinstance(drink_id, int):
+            raise CoffeeApiError(f"В ответе POST id не целое число: {drink_id!r}")
+        return created
+    
     def replace_drink(
         self,
         drink_id: int,
@@ -106,3 +112,9 @@ class SampleApisCoffeeClient:
             return response.json()
         except ValueError as error:
             raise CoffeeApiError("Сервер прислал битый JSON") from error
+
+    def _json_object(self, response: requests.Response) -> JsonObject:
+        data = self._json(response)
+        if not isinstance(data, dict):
+            raise CoffeeApiError("Ожидали JSON-объект напитка")
+        return data
