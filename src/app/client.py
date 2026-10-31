@@ -45,7 +45,8 @@ class SampleApisCoffeeClient:
         return response.json()
     
     def get_drink(self, drink_id: int) -> JsonObject:
-        raise NotImplementedError
+        response = self._request("GET", f"/{drink_id}")
+        return response.json()
 
     def create_drink(self, payload: JsonObject) -> JsonObject:
         raise NotImplementedError
@@ -65,7 +66,7 @@ class SampleApisCoffeeClient:
         raise NotImplementedError
 
     def delete_drink(self, drink_id: int) -> None:
-        raise NotImplementedError
+        self._request("DELETE", f"/{drink_id}")
 
     def _request(
         self,
@@ -80,4 +81,8 @@ class SampleApisCoffeeClient:
             )
         except requests.RequestException as error:
             raise CoffeeApiError(f"{method} {url}: ошибка сети") from error
+        if response.status_code == 404:
+            raise CoffeeNotFoundError(f"{method} {url}: не найдено (404)")
+        if not 200 <= response.status_code < 300:
+            raise CoffeeApiError(f"{method} {url}: HTTP {response.status_code}")
         return response
