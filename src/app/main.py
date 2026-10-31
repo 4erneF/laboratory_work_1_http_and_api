@@ -36,6 +36,15 @@ def main() -> int:
         fetched = client.get_drink(created_id)
         check_fields(new_drink, fetched, "3. GET")
         print("3. GET: все поля совпали с отправленными")
+        replacement = {
+            "title": f"Replaced coffee {marker}",
+            "description": "Fully replaced",
+            "ingredients": ["Espresso"],
+            "image": "https://example.com/replaced.jpg",
+        }
+        client.replace_drink(created_id, replacement)
+        check_fields(replacement, client.get_drink(created_id), "GET после PUT")
+        print("4. PUT: все поля заменились")
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
         return 1
